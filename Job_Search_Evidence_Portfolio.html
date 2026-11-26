@@ -36,9 +36,9 @@ header{border-bottom:1px solid var(--line);background:#091116ce}header .inner{di
 <section class="hero">
 <a class="portfolio-back" href="index.html" aria-label="Back to Tarjin Rahman main portfolio">← Back to my main portfolio</a>
 <div class="eyebrow">A public employment search · documented in evidence</div>
-<h1>44 applications.<br><em>44 stories of effort.</em></h1>
+<h1><span id="heroApplications">45</span> applications.<br><em><span id="heroStories">45</span> stories of effort.</em></h1>
 <p>This isn't a list of job titles. It's an inspectable record of the positions I pursued, the résumés I tailored, and the cover letters I wrote. Each application has its own evidence dossier. The outcome that matters is finding the right full-time role.</p>
-<div class="hero-line"><span class="pill"><span class="pulse"></span> Public application record</span><span class="pill">August 9 – November 7, 2026</span><span class="pill">Applicant-curated · as of November 7</span></div>
+<div class="hero-line"><span class="pill"><span class="pulse"></span> Public application record</span><span class="pill" id="heroDateRange">August 9 – November 26, 2026</span><span class="pill" id="heroAsOf">Applicant-curated · as of November 26</span></div>
 </section>
 <section class="statbar" aria-label="Evidence portfolio statistics">
 <div class="stat"><div class="number" id="countApps">44</div><div class="label">Recorded applications</div></div>
@@ -297,6 +297,12 @@ function close(){
 }
 A.sort((a,b)=>b.date.localeCompare(a.date)||a._ledgerOrder-b._ledgerOrder);
 $('countApps').textContent=String(A.length);
+$('heroApplications').textContent=String(A.length);
+$('heroStories').textContent=String(A.length);
+const dates=A.map(r=>r.date).filter(d=>typeof d==='string'&&/^\d{4}-\d{2}-\d{2}$/.test(d)).sort();
+const longDate=(d,withYear=true)=>{const [y,m,n]=d.split('-');return new Intl.DateTimeFormat('en-US',{month:'long',day:'numeric',...(withYear?{year:'numeric'}:{}),timeZone:'UTC'}).format(new Date(Date.UTC(Number(y),Number(m)-1,Number(n))))};
+if(dates.length){const first=dates[0],last=dates[dates.length-1];$('heroDateRange').textContent=longDate(first,first.slice(0,4)!==last.slice(0,4))+' – '+longDate(last);$('heroAsOf').textContent='Applicant-curated · as of '+longDate(last,false);}
+else{$('heroDateRange').textContent='No applications recorded';$('heroAsOf').textContent='Applicant-curated';}
 $('countJobs').textContent=String(A.filter(r=>r.docs?.job).length);
 $('countResumes').textContent=String(A.filter(r=>r.docs?.resume).length);
 $('countLetters').textContent=String(A.filter(r=>r.docs?.letter).length);
