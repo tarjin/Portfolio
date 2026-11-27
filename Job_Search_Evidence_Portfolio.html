@@ -227,6 +227,49 @@ window.RED5_APPLICATIONS.unshift({
   }
 });
 </script>
+<!-- November 27 application: DRAC. -->
+<script>
+window.RED5_APPLICATIONS.unshift({
+  "id": "2026-11-27-drac-business-analyst",
+  "date": "2026-11-27",
+  "company": "Digital Research Alliance of Canada (DRAC)",
+  "title": "Business Analyst",
+  "description": "Application submitted November 27, 2026 through the employer's recruitment portal. Remote Canada role supporting national digital research infrastructure modernization, requirements analysis and service improvement. Archived job description, résumé, tailored cover letter and professional portfolio are linked directly as individual Google Drive PDFs. Application acknowledgement and correspondence are retained privately.",
+  "outcome": "Application submitted",
+  "episode": "Not recorded",
+  "interviewScheduled": false,
+  "jobOffered": false,
+  "offerRefused": false,
+  "docs": {
+    "job": "https://drive.google.com/file/d/1fyoHdBS5XyNaaM8AjK0WyMSXOwybNwvx/view?usp=drivesdk",
+    "resume": "https://drive.google.com/file/d/1DjRuMQ4ZUBpFCshvA4pwvirS93ob1CGe/view?usp=drivesdk",
+    "letter": "https://drive.google.com/file/d/1eErq3VK5LOo_clC3V2RmkAf3sGkWOE8r/view?usp=drivesdk",
+    "portfolio": "https://drive.google.com/file/d/1I4rSPfElTXaE2afTo0vcJ1MOQz6PNtQU/view?usp=drivesdk"
+  },
+  "docDetails": {
+    "job": {
+      "format": "PDF",
+      "filename": "DRAC Business Analyst Job Description.pdf",
+      "source": "Google Drive file archive"
+    },
+    "resume": {
+      "format": "PDF",
+      "filename": "Tarjin_Rahman_Resume.pdf",
+      "source": "Google Drive file archive"
+    },
+    "letter": {
+      "format": "PDF",
+      "filename": "Tarjin_Rahman_DRAC_Cover_Letter.pdf",
+      "source": "Google Drive file archive"
+    },
+    "portfolio": {
+      "format": "PDF",
+      "filename": "Tarjin_Rahman_Professional_Portfolio.pdf",
+      "source": "Google Drive file archive"
+    }
+  }
+});
+</script>
 <script>(()=>{
 'use strict';
 const A=Array.isArray(window.RED5_APPLICATIONS)?window.RED5_APPLICATIONS:[];
@@ -236,7 +279,7 @@ A.forEach((r,i)=>{r._ledgerOrder=i});
 const $=id=>document.getElementById(id);
 const esc=s=>String(s??'').replace(/[&<>"']/g,c=>({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
 const day=s=>{const [y,m,d]=(s||'').split('-');return y&&m&&d?`${['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'][Number(m)-1]} ${Number(d)}, ${y}`:s};
-const keyNames={job:'Job description',resume:'Résumé',letter:'Cover letter',packet:'Application packet'};
+const keyNames={job:'Job description',resume:'Résumé',letter:'Cover letter',packet:'Application packet',portfolio:'Professional portfolio'};
 let filtered=[],lastFocus=null,active=null,activeDoc=null;
 const docIcon=(r,k)=>r.docs?.[k]?`<button class="docBtn" data-tab="${k}" data-id="${esc(r.id)}" title="${r.docs[k].includes('/drive/folders/')?'Browse folder for ':'Open '}${keyNames[k]}">${k==='job'?'Position':k==='resume'?'Résumé':'Letter'}${r.docs[k].includes('/drive/folders/')?' (folder)':''} ↗<\/button>`:`<span class="docBtn missing" title="File was not present in archive">${k==='job'?'Position':k==='resume'?'Résumé':'Letter'} · —<\/span>`;
 const check=(state,label)=>`<input class="check" type="checkbox" aria-label="${esc(label)}: ${state?'yes':'not recorded'}" ${state?'checked':''} disabled>`;
@@ -284,7 +327,7 @@ function open(id,tab=null){
  $('positionNumber').textContent=String(A.indexOf(r)+1).padStart(2,'0');
  $('detailStatus').innerHTML=[['interviewScheduled','Interview scheduled'],['jobOffered','Job is offered'],['offerRefused','I refused offer']].map(([k,s])=>`<label>${check(r[k],s)} ${s}<\/label>`).join('')+`<span class="outcome">${esc(r.outcome||'Application recorded')}<\/span>`;
  const ep=podcastFor(r); if(ep){const a=document.createElement('a');a.className='detailPodcast';a.href=ep.url;a.target='_blank';a.rel='noopener noreferrer';a.textContent='Beyond the Title · '+ep.label;a.title=ep.individual?'Watch episode':'Open playlist (individual video link not yet verified)';$('detailStatus').append(a)}
- $('tabs').innerHTML=['job','resume','letter','packet'].filter(k=>k!=='packet'||r.docs?.packet).map(k=>`<button type="button" class="tab" role="tab" aria-selected="false" data-key="${k}" ${r.docs?.[k]?'':'disabled'}>${keyNames[k]} ${r.docs?.[k]?'':' · not archived'}<\/button>`).join('');
+ $('tabs').innerHTML=['job','resume','letter','packet','portfolio'].filter(k=>!['packet','portfolio'].includes(k)||r.docs?.[k]).map(k=>`<button type="button" class="tab" role="tab" aria-selected="false" data-key="${k}" ${r.docs?.[k]?'':'disabled'}>${keyNames[k]} ${r.docs?.[k]?'':' · not archived'}<\/button>`).join('');
  const first=tab&&r.docs?.[tab]?tab:['job','resume','letter'].find(k=>r.docs?.[k]);
  if(first){setDoc(first)}else{$('reader').innerHTML='<div class="noDoc">No application document was supplied with this archive.<\/div>';$('docSource').textContent='No documents archived';$('openDoc').hidden=true}
  $('close').focus();
@@ -312,7 +355,7 @@ $('rows').addEventListener('click',e=>{const b=e.target.closest('button');if(!b)
 $('tabs').addEventListener('click',e=>{const b=e.target.closest('button');if(b?.dataset.key){setDoc(b.dataset.key);(()=>{try{history.replaceState(null,'','#application='+encodeURIComponent(active.id)+'&document='+b.dataset.key)}catch(e){}})()}});
 $('close').addEventListener('click',close);$('overlay').addEventListener('click',e=>{if(e.target===$('overlay'))close()});document.addEventListener('keydown',e=>{if(e.key==='Escape'&&!$('overlay').hidden)close()});
 render();
-function initHash(){const m=location.hash.match(/^#application=([^&]+)(?:&document=(job|resume|letter|packet))?/);if(m){try{open(decodeURIComponent(m[1]),m[2]||null)}catch{}}}
+function initHash(){const m=location.hash.match(/^#application=([^&]+)(?:&document=(job|resume|letter|packet|portfolio))?/);if(m){try{open(decodeURIComponent(m[1]),m[2]||null)}catch{}}}
 initHash();window.addEventListener('hashchange',()=>{if(location.hash.startsWith('#application='))initHash();else if(!$('overlay').hidden)close()});
 })();
 </script>
